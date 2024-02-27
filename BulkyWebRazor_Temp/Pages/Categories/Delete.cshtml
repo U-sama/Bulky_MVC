@@ -1,0 +1,39 @@
+﻿@page
+@model BulkyWebRazor_Temp.Pages.Categories.DeleteModel
+
+
+
+<form method="post">
+    <input asp-for="CategoriesFromDb.Id" hidden />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Delete Category</h2>
+            <hr />
+        </div>
+        @* <div asp-validation-summary="All"></div> *@
+        @*If we made it ModelOnly it will display the validations related to the model and not the properties*@
+        <div class="row mb-3 p-1">
+            <label asp-for="CategoriesFromDb.Name" class="text-primary p-0"></label>
+            <input asp-for="CategoriesFromDb.Name" disabled class="form-control" />
+            <span asp-validation-for="CategoriesFromDb.Name" class="text-danger"></span>
+        </div>
+        <div class="row mb-3 p-1">
+            <label asp-for="CategoriesFromDb.DisplayOrder" class="text-primary p-0"></label>
+            <input asp-for="CategoriesFromDb.DisplayOrder" disabled class="form-control" />
+            <span asp-validation-for="CategoriesFromDb.DisplayOrder" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-6 col-md-3">
+                <button type="submit" class="btn btn-danger form-control">Delete</button>
+            </div>
+            <div class="col-6 col-md-3">
+                <a asp-page="/Categories/Index" class="btn btn-secondary border form-control">BACK TO LIST</a>
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
