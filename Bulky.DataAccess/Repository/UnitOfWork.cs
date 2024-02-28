@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace BulkyBook.DataAccess.Repository
 {
-    internal class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
-        public ICategoryRepository category { get; private set; }
+        public ICategoryRepository Category { get; private set; }
         private ApplicationDbContext _db;
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
-            category = new CategoryRepository(_db);
+            Category = new CategoryRepository(_db);
         }
 
         public void Save()
