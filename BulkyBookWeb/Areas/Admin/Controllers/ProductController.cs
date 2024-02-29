@@ -1,6 +1,8 @@
 ﻿using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
@@ -22,20 +24,42 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            ProductVM productVM = new ProductVM
+            {
+                CategoryList = _unitOfWork.Category.GetAll()
+                                           .Select(c => new SelectListItem
+                                           {
+                                               Text = c.Name,
+                                               Value = c.Id.ToString()
+                                           })
+            };
+        
+            //ViewBag.CategoryList = CategoryList;
+            //ViewData["CategoryList"] = CategoryList;
+            return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(ProductVM productVM)
         {
             if(ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(product);
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfuly";
                 return RedirectToAction("Index", "Product");
             }
-            return View();
+            else
+            {
+                productVM.CategoryList = _unitOfWork.Category.GetAll()
+                                                             .Select(c => new SelectListItem
+                                                             {
+                                                                Text = c.Name,
+                                                                Value = c.Id.ToString()
+                                                             });
+                return View(productVM);
+            }
+            
         }
 
         public IActionResult Edit(int? Id)
