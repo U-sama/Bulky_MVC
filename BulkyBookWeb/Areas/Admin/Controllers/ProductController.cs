@@ -22,7 +22,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return View(objProductList);
         }
 
-        public IActionResult Create()
+        public IActionResult Upsert(int? Id)
         {
             ProductVM productVM = new ProductVM
             {
@@ -33,14 +33,25 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                                                Value = c.Id.ToString()
                                            })
             };
-        
-            //ViewBag.CategoryList = CategoryList;
-            //ViewData["CategoryList"] = CategoryList;
-            return View(productVM);
+
+            if(Id == null || Id == 0)
+            {
+                productVM.Product = new Product();
+                // Create
+                return View(productVM);
+            }
+            else
+            {
+                //Update
+                productVM.Product = _unitOfWork.Product.Get(p => p.Id == Id);
+                if (productVM.Product == null)
+                    return NotFound();
+                return View(productVM);
+            }
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Upsert(ProductVM productVM)
         {
             if(ModelState.IsValid)
             {
@@ -62,28 +73,6 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             
         }
 
-        public IActionResult Edit(int? Id)
-        {
-            if (Id == null || Id == 0)
-                return NotFound();
-            Product objProduct =  _unitOfWork.Product.Get(p => p.Id == Id);
-            if(objProduct == null)
-                return NotFound();
-            return View(objProduct);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Product.Update(product);
-                _unitOfWork.Save();
-                TempData["success"] = "Product Updated successfuly";
-                return RedirectToAction("Index", "Product");
-            }
-            return View();
-        }
 
         public IActionResult Delete(int? Id)
         {
