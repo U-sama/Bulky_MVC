@@ -19,12 +19,11 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return View(objCategoryList);
         }
 
-
-
         public IActionResult Create()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Create(Category obj)
         {
