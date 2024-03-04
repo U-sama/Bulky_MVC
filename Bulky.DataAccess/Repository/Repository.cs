@@ -25,16 +25,31 @@ namespace BulkyBook.DataAccess.Repository
             dbset.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? IncludeProperties = null)
         {
             IQueryable<T> query = dbset;
+            if (!string.IsNullOrEmpty(IncludeProperties))
+            {
+                foreach (var item in IncludeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item);
+                }
+            }
             query = query.Where(filter);
             return query.FirstOrDefault();
         }
-
-        public IEnumerable<T> GetAll()
+        //IncludeProperties: "Category, Product"
+        public IEnumerable<T> GetAll(string? IncludeProperties = null)
         {
-            return dbset.ToList();
+            IQueryable<T> query = dbset;
+            if (!string.IsNullOrEmpty(IncludeProperties))
+            {
+                foreach (var item in IncludeProperties.Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item);
+                }
+            }
+            return query.ToList();
         }
 
         public void Remove(T entity)
