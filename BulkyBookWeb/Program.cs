@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Over write the default paths for identity as we make in in areas
+// these lines must be after the AddIdentity Service
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = $"/Identity/Account/Login";
