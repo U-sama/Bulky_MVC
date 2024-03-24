@@ -65,6 +65,11 @@
                             <option selected disabled>--Select Role--</option>
                         </select>
                     </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <select asp-for="Input.CompanyId" style="display:none" asp-items="@Model.Input.CompanyList" class="form-select">
+                            <option selected disabled>--Select Company--</option>
+                        </select>
+                    </div>
                     <div class="col-md-12">
                         <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
                     </div>
@@ -110,4 +115,19 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Show Or hide Company ddl based on the chosen role of the user
+        $(document).ready(function () {
+            $('#Input_Role').on('change', function () {
+                if (this.value == "Company")
+                //.....................^.......
+                {
+                    $("#Input_CompanyId").show();
+                }
+                else {
+                    $("#Input_CompanyId").hide();
+                }
+            });
+        });
+    </script>
 }
