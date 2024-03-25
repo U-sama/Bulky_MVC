@@ -1,7 +1,9 @@
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BulkyBookWeb.Areas.Custromer.Controllers
 {
@@ -24,8 +26,39 @@ namespace BulkyBookWeb.Areas.Custromer.Controllers
         }
         public IActionResult Details(int productId)
         {
-            Product product = _unitOfWork.Product.Get(p => p.Id == productId ,IncludeProperties: "Category");
-            return View(product);
+            ShoppingCart cart = new ShoppingCart
+            {
+                Product = _unitOfWork.Product.Get(p => p.Id == productId, IncludeProperties: "Category"),
+                Count = 1,
+                ProductId = productId
+            };
+            return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart cart)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            cart.ApplicationUserId = userId;
+
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(c => c.ApplicationUserId == userId && c.ProductId == cart.ProductId);
+            if(cartFromDb != null)
+            {
+                // Update existing record
+                cartFromDb.Count += cart.Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else
+            {
+                // add record to cart
+                _unitOfWork.ShoppingCart.Add(cart);
+            }
+            
+            _unitOfWork.Save();
+            TempData["success"] = "Cart updated successfuly";
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()
