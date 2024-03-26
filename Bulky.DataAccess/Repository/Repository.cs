@@ -44,9 +44,11 @@ namespace BulkyBook.DataAccess.Repository
             return query.FirstOrDefault();
         }
         //IncludeProperties: "Category, Product"
-        public IEnumerable<T> GetAll(string? IncludeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? IncludeProperties = null)
         {
             IQueryable<T> query = dbset;
+            if (filter != null)
+                dbset.Where(filter);
             if (!string.IsNullOrEmpty(IncludeProperties))
             {
                 foreach (var item in IncludeProperties.Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries))
