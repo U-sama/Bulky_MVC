@@ -3,6 +3,7 @@ using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace BulkyBookWeb.Areas.Customer.Controllers
@@ -115,8 +116,42 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
 			if (applicationUser.CompanyId.GetValueOrDefault() == 0)
 			{
-				// Is a regular user and we need to capture payment
+                // Is a regular user and we need to capture payment
                 // stripe logic
+                string domain = "https://localhost:7173/";
+				var options = new Stripe.Checkout.SessionCreateOptions
+				{
+					SuccessUrl = domain + $"Customer/Cart/OrderConfirmation?orderId={ShoppingCartVM.OrderHeader.Id}",
+                    CancelUrl = domain + "Customer/Cart/Index",
+					LineItems = new List<SessionLineItemOptions>(),
+					Mode = "payment",
+				};
+
+                foreach (var item in ShoppingCartVM.ShoppingCartsList)
+                {
+                    var sessionLineItem = new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(item.Price * 100), //$20.50 => 2050
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = item.Product.Title
+                            }
+                        },
+                        Quantity = item.Count
+                    };
+                    options.LineItems.Add(sessionLineItem);
+                    
+                }
+
+                var service = new Stripe.Checkout.SessionService();
+				Stripe.Checkout.Session session =  service.Create(options);
+                _unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+                _unitOfWork.Save();
+                Response.Headers.Add("Location", session.Url);
+                return new StatusCodeResult(303);
 			}
 
 			return RedirectToAction(nameof(OrderConfirmation), new { orderId = ShoppingCartVM.OrderHeader.Id} );
@@ -124,6 +159,28 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation (int orderId)
         {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(o => o.Id == orderId);
+            if (orderHeader != null)
+            {
+                if(orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
+                {
+                    // Customer order
+
+                    var service = new SessionService();
+                    Session session = service.Get(orderHeader.SessionId);
+                    if(session.PaymentStatus.ToLower() == "paid") // order paid successfuly
+                    {
+                        _unitOfWork.OrderHeader.UpdateStripePaymentID(orderId, session.Id, session.PaymentIntentId);
+                        _unitOfWork.OrderHeader.UpdateStatus(orderId, SD.StatusApproved, SD.PaymentStatusApproved);
+                        _unitOfWork.Save();
+                    }
+                }
+
+                List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart
+                        .GetAll(s => s.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+                _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+                _unitOfWork.Save();
+            }
             return View(orderId);
         }
 

@@ -27,9 +27,10 @@ namespace BulkyBook.Models
         public string? Carrier {  get; set; }
 
         // For company user will have 30 day to make payment
-        public DateTime PaymentDue {  get; set; }
+        public DateTime PaymentDate {  get; set; }
         public DateOnly PaymentDueDate { get; set; }
 
+        public string? SessionId { get; set; }
         public string? PaymentIntentId { get; set; }
 
         [Required]
