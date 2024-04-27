@@ -89,8 +89,8 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             if(applicationUser.CompanyId.GetValueOrDefault() == 0)
             {
                 // Is a regular user 
-                ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPanding;
-                ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPanding;
+                ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+                ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
             }
             else
             {
@@ -118,7 +118,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 			{
                 // Is a regular user and we need to capture payment
                 // stripe logic
-                string domain = "https://localhost:7173/";
+                string domain = "https://localhost:8000/";
 				var options = new Stripe.Checkout.SessionCreateOptions
 				{
 					SuccessUrl = domain + $"Customer/Cart/OrderConfirmation?orderId={ShoppingCartVM.OrderHeader.Id}",
