@@ -1,5 +1,6 @@
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -49,11 +50,17 @@ namespace BulkyBookWeb.Areas.Custromer.Controllers
                 // Update existing record
                 cartFromDb.Count += cart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
             }
             else
             {
                 // add record to cart
                 _unitOfWork.ShoppingCart.Add(cart);
+                _unitOfWork.Save();
+
+                // Add Cart item count to session
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
             }
             
             _unitOfWork.Save();

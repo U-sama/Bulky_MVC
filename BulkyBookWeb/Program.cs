@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BulkyBook.Utility;
 using Stripe;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = $"/Identity/Account/Login";
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
+
+// Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromMinutes(30);
+    option.Cookie.HttpOnly = true;
+    option.Cookie.IsEssential = true;
 });
 
 builder.Services.AddRazorPages();
@@ -55,6 +65,7 @@ app.UseRouting();
 // authenticate the user first
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
