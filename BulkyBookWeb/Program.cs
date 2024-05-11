@@ -44,6 +44,12 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+builder.Services.AddAuthentication().AddFacebook(options =>
+{
+    options.ClientId = builder.Configuration.GetSection("FaceBook:AppId").Value;
+    options.ClientSecret = builder.Configuration.GetSection("FaceBook:AppSecret").Value;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
