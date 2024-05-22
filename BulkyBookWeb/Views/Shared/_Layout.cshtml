@@ -54,6 +54,9 @@
                                     <li class="nav-item">
                                         <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">Manage Users</a>
+                                    </li>
                                 </ul>
                             </li>
                         }
@@ -86,6 +89,8 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.tiny.cloud/1/gxg0qdxwblz4g08jag9f0kufsqzacth77lbaf8ggfxe2kvi1/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.min.js" referrerpolicy="origin"></script>
