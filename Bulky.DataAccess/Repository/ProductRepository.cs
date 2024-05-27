@@ -28,10 +28,7 @@ namespace BulkyBook.DataAccess.Repository
                 product.Description = obj.Description;
                 product.CategoryId = obj.CategoryId;
                 product.Author = obj.Author;
-                //if(obj.ImageUrl != null)
-                //{
-                //    product.ImageUrl = obj.ImageUrl;
-                //}
+                product.ProductImages = obj.ProductImages;
             }
         }
     }

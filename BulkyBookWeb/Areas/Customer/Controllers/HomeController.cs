@@ -22,14 +22,14 @@ namespace BulkyBookWeb.Areas.Custromer.Controllers
 
         public IActionResult Index()
         {
-            List<Product> ProductList = _unitOfWork.Product.GetAll(IncludeProperties: "Category").ToList();
+            List<Product> ProductList = _unitOfWork.Product.GetAll(IncludeProperties: "Category,ProductImages").ToList();
             return View(ProductList);
         }
         public IActionResult Details(int productId)
         {
             ShoppingCart cart = new ShoppingCart
             {
-                Product = _unitOfWork.Product.Get(p => p.Id == productId, IncludeProperties: "Category"),
+                Product = _unitOfWork.Product.Get(p => p.Id == productId, IncludeProperties: "Category,ProductImages"),
                 Count = 1,
                 ProductId = productId
             };
