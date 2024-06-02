@@ -26,7 +26,7 @@ Bulky Book Web is an  E-Commerce website built using ASP.NET Core MVC (.NET 8).
 
 **Client:** HTML, CSS, JavaScript
 
-**Server:** C#, .Net MVC, SQLServer - Entity Framework
+**Server:** C#, .Net MVC, SQL Server, Entity Framework
 
 
 
