@@ -10,16 +10,16 @@ Bulky Book Web is an  E-Commerce website built using ASP.NET Core MVC (.NET 8).
 - User Registration for different users (Admin, Customers, Company, Employee)
 - N-Tier architecture 
 - Repository Pattern
-- User Authentications and Autherizations
+- User Authentications and Authorizations
 - Two-Factory Authentication with Facebook
-- Notify Customers for the products shipping status
+- Notify Customers of the products shipping status
 - Stripe Payment Gateway
 
 
 
 ## Screenshots
 
-![HomePage](BulkyBookWeb\wwwroot\images\HomePage.png)
+![HomePage](BulkyBookWeb/wwwroot/images/HomePage.png)
 
 
 ## Tech Stack
